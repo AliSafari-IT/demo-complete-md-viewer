@@ -1,6 +1,6 @@
 {
   "name": "demo-complete-md-viewer",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "A demo application for @asafarim/complete-md-viewer package",
   "type": "module",
   "scripts": {
@@ -44,5 +44,15 @@
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
-  "homepage": "https://alisafari-it.github.io/complete-md-viewer#readme"
+  "homepage": "https://alisafari-it.github.io/complete-md-viewer#readme",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/AliSafari-IT/demo-complete-md-viewer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AliSafari-IT/demo-complete-md-viewer/issues"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
 }
