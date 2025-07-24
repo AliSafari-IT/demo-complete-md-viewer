@@ -1,5 +1,5 @@
-// Import our custom viewers that avoid router nesting issues
-import { CustomStandaloneViewer, CustomIntegratedViewer } from './CustomViewers';
+// Import our custom viewer that avoids router nesting issues
+import { CustomMarkdownViewer } from './CustomViewers';
 
 const MarkdownViewer = ({
   apiBaseUrl,
@@ -17,18 +17,11 @@ const MarkdownViewer = ({
     <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
 
       <div style={{ flex: 1 }}>
-        {integrated ? 
-          <CustomIntegratedViewer
-            apiBaseUrl={apiBaseUrl}
-            basePath={basePath || '/md-docs'}
-            hideFileTree={hideFileTree}
-          /> :
-          <CustomStandaloneViewer
-            apiBaseUrl={apiBaseUrl}
-            basePath={basePath || '/docs'}
-            hideFileTree={hideFileTree}
-          />
-        }
+        <CustomMarkdownViewer
+          apiBaseUrl={apiBaseUrl}
+          basePath={basePath || (integrated ? '/md-docs' : '/docs')}
+          hideFileTree={hideFileTree}
+        />
       </div>
     </div>
   );

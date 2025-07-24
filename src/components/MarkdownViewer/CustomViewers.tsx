@@ -42,10 +42,11 @@ const EnhancedMobileViewer: React.FC<{
 };
 
 /**
- * Custom implementation of the standalone viewer that doesn't create its own router
+ * Custom markdown viewer that doesn't create its own router
  * This avoids the "You cannot render a <Router> inside another <Router>" error
+ * Can be used for both standalone and integrated modes
  */
-export const CustomStandaloneViewer: React.FC<{
+export const CustomMarkdownViewer: React.FC<{
   apiBaseUrl: string;
   basePath?: string;
   hideFileTree?: boolean;
@@ -58,19 +59,6 @@ export const CustomStandaloneViewer: React.FC<{
   );
 };
 
-/**
- * Custom implementation of the integrated viewer
- * This ensures we're using the same approach for both viewers
- */
-export const CustomIntegratedViewer: React.FC<{
-  apiBaseUrl: string;
-  basePath?: string;
-  hideFileTree?: boolean;
-}> = (props) => {
-  return (
-    <EnhancedMobileViewer
-      {...props}
-      useExternalRouter={true} // Use the app's router instead of creating a new one
-    />
-  );
-};
+// Backwards compatibility exports - both point to the same component
+export const CustomStandaloneViewer = CustomMarkdownViewer;
+export const CustomIntegratedViewer = CustomMarkdownViewer;
