@@ -53,6 +53,7 @@ const AppContent = () => {
         basePath="/docs"
         hideFileTree={false}
         integrated={false}
+        key={location.pathname} // Ensure re-render on path change
       />
     );
   }
@@ -78,6 +79,7 @@ const AppContent = () => {
         basePath="/md-docs"
         hideFileTree={false}
         integrated={true}
+        key={location.pathname} // Ensure re-render on path change
       />
     );
   }

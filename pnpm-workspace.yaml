@@ -1,2 +1,4 @@
 packages:
 
+  - 'package-source/complete-md-viewer'
+  - 'package-source/complete-md-viewer/**'
