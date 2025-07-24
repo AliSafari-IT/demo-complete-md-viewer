@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { MarkdownViewerBase } from '@asafarim/complete-md-viewer';
 import '@asafarim/complete-md-viewer/dist/style.css';
 
-// Enhanced viewer wrapper with mobile optimizations
+// Enhanced viewer wrapper with mobile optimizations and URL path management
 const EnhancedMobileViewer: React.FC<{
   apiBaseUrl: string;
   basePath?: string;
@@ -10,6 +11,8 @@ const EnhancedMobileViewer: React.FC<{
   useExternalRouter?: boolean;
 }> = (props) => {
   const [isMobile, setIsMobile] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
 
   // Check if screen is mobile size
   useEffect(() => {
@@ -28,13 +31,42 @@ const EnhancedMobileViewer: React.FC<{
     return () => window.removeEventListener('resize', checkIsMobile);
   }, []);
 
+  // Extract the file path from the current URL
+  const getCurrentFilePath = () => {
+    const basePath = props.basePath || '/md-docs';
+    const currentPath = location.pathname;
+    
+    // Remove the base path to get the file path
+    if (currentPath.startsWith(basePath + '/')) {
+      const filePath = currentPath.substring(basePath.length + 1);
+      console.log('🔍 Extracted file path from URL:', filePath);
+      return filePath;
+    }
+    
+    console.log('🏠 No specific file path, using default');
+    return '';
+  };
+
+  // Get the current file path
+  const currentFilePath = getCurrentFilePath();
+
   return (
     <>      
-      <div className={`enhanced-viewer ${isMobile ? 'mobile' : ''}`}>
+      <div className={`enhanced-viewer ${isMobile ? 'mobile' : ''}`} key={location.pathname}>
         <MarkdownViewerBase
           {...props}
           hideFileTree={isMobile ? false : props.hideFileTree}
           useExternalRouter={props.useExternalRouter || true}
+          showHomePage={!currentFilePath}
+          initialFilePath={currentFilePath}
+          selectedFile={currentFilePath}
+          integrated={true}
+          onFileSelect={(filePath: string) => {
+            console.log('📄 File selected:', filePath);
+            const basePath = props.basePath || '/md-docs';
+            const newPath = filePath ? `${basePath}/${filePath}` : basePath;
+            navigate(newPath);
+          }}
         />
       </div>
     </>

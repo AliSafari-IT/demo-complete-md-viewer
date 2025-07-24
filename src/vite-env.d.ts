@@ -8,8 +8,13 @@ declare module '@asafarim/complete-md-viewer' {
     basePath?: string;
     hideFileTree?: boolean;
     useExternalRouter?: boolean;
+    initialFilePath?: string;
+    selectedFile?: string;
+    currentFilePath?: string;
+    integrated?: boolean;
     showHomePage?: boolean;
     sidebarCollapsed?: boolean;
+    onFileSelect?: (filePath: string) => void;
   }
   
   export const MarkdownViewerBase: ComponentType<MarkdownViewerBaseProps>;
