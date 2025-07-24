@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@asafarim/complete-md-viewer':
-        specifier: file:./package-source/complete-md-viewer
-        version: file:package-source/complete-md-viewer(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.30.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
+        specifier: ^1.1.0
+        version: 1.1.0(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.30.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       cors:
         specifier: ^2.8.5
         version: 2.8.5
@@ -64,8 +64,8 @@ packages:
     resolution: {integrity: sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==}
     engines: {node: '>=6.0.0'}
 
-  '@asafarim/complete-md-viewer@file:package-source/complete-md-viewer':
-    resolution: {directory: package-source/complete-md-viewer, type: directory}
+  '@asafarim/complete-md-viewer@1.1.0':
+    resolution: {integrity: sha512-UBGmyQXSWZ7/EcHlNxhEfLjo6q1HCboa84BTycdSs1xsY0gbHoUxLXHLw+tEcSLLCSZhEUKaJL6ZxmZFoWmErw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^18.0.0
@@ -1586,7 +1586,7 @@ snapshots:
       '@jridgewell/gen-mapping': 0.3.12
       '@jridgewell/trace-mapping': 0.3.29
 
-  '@asafarim/complete-md-viewer@file:package-source/complete-md-viewer(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.30.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
+  '@asafarim/complete-md-viewer@1.1.0(@types/react@18.3.23)(react-dom@18.3.1(react@18.3.1))(react-router-dom@6.30.1(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)':
     dependencies:
       js-yaml: 4.1.0
       react: 18.3.1
