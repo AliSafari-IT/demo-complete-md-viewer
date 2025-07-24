@@ -14,7 +14,10 @@
     "test-server": "pnpm kp && node server.js",
     "prod": "pnpm kp && cross-env NODE_ENV=production node server.js",
     "build-and-serve": "pnpm build && pnpm prod",
-    "gh-pages": "npm run build && gh-pages -d dist"
+    "build:gh": "vite build --config vite.config.gh.ts",
+    "gh-pages": "npm run build:gh && gh-pages -d dist",
+    "deploy": "pnpm run gh-pages",
+    "deploy:prod": "pnpm  run deploy && git push origin main --force"
   },
   "dependencies": {
     "@asafarim/complete-md-viewer": "^1.0.1",
@@ -31,11 +34,14 @@
     "@vitejs/plugin-react": "^4.2.1",
     "concurrently": "^8.2.2",
     "cross-env": "^7.0.3",
+    "gh-pages": "^6.1.1",
     "kill-port": "^2.0.1",
     "typescript": "^5.2.2",
     "vite": "^5.0.8"
   },
   "keywords": [
+    "asafarim",
+    "@asafarim/complete-md-viewer",
     "markdown",
     "viewer",
     "react",
@@ -44,7 +50,7 @@
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.13.1",
-  "homepage": "https://alisafari-it.github.io/complete-md-viewer#readme",
+  "homepage": "https://alisafari-it.github.io/demo-complete-md-viewer/Readme.md",
   "repository": {
     "type": "git",
     "url": "https://github.com/AliSafari-IT/demo-complete-md-viewer.git"

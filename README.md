@@ -1,118 +1,350 @@
+# @asafarim/complete-md-viewer
+
+A flexible, production-ready markdown viewer component for React applications with support for both standalone and integrated use cases. Transform your markdown files into a professional documentation website with an intuitive file tree, responsive design, and beautiful theming.
+
+## ✨ Features
+
+- 📁 **Interactive File Tree Navigation** - Browse markdown files with collapsible sidebar
+- 📝 **Professional Markdown Rendering** - Syntax highlighting and GitHub Flavored Markdown support
+- 🔍 **YAML Front Matter Support** - Rich document metadata display
+- 🌗 **Light & Dark Themes** - Seamless theme switching with consistent styling
+- 📱 **Mobile Responsive** - Optimized for desktop, tablet, and mobile devices
+- 🎨 **Customizable Styling** - Easy theme customization and CSS overrides
+- 🔄 **Flexible Integration Options**:
+  - **Standalone mode** with built-in router for independent documentation sites
+  - **Integrated mode** that works seamlessly with your existing React Router setup
+- 🚀 **Production Ready** - Optimized for performance and professional documentation sites
+
+## 🚀 Quick Start
+
+For a complete tutorial with screenshots and advanced features, see our [Complete Tutorial](./how-to.md).
+
+### Basic Setup
+
+```bash
+npm install @asafarim/complete-md-viewer
+# Ensure you have peer dependencies
+npm install react react-dom react-router-dom
+```
+
+### Minimal Example
+
+```tsx
+import { HashRouter, Routes, Route } from 'react-router-dom';
+import { MarkdownContent, ThemeProvider } from '@asafarim/complete-md-viewer';
+import '@asafarim/complete-md-viewer/dist/style.css';
+
+function App() {
+  const [theme, setTheme] = useState('light');
+  
+  return (
+    <ThemeProvider theme={theme} toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+      <HashRouter>
+        <Routes>
+          <Route 
+            path="/*" 
+            element={
+              <MarkdownContent 
+                apiBaseUrl="http://localhost:3300" 
+                showHomePage={true}
+                hideFileTree={false}
+              />
+            } 
+          />
+        </Routes>
+      </HashRouter>
+    </ThemeProvider>
+  );
+}
+```
+
+## 📖 Usage Examples
+
+### Standalone Mode
+
+Perfect for dedicated documentation sites. Includes built-in routing and theme management:
+
+```tsx
+import { StandaloneMarkdownViewer } from '@asafarim/complete-md-viewer';
+import '@asafarim/complete-md-viewer/dist/style.css';
+
+function App() {
+  return (
+    <StandaloneMarkdownViewer 
+      apiBaseUrl="http://localhost:3300"
+      showHomePage={true}
+      hideFileTree={false}
+      sidebarCollapsed={true} // Professional collapsed sidebar by default
+    />
+  );
+}
+```
+
+### Integrated Mode
+
+Embed within your existing React Router application:
+
+```tsx
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { IntegratedMarkdownViewer } from '@asafarim/complete-md-viewer';
+import '@asafarim/complete-md-viewer/dist/style.css';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/docs/*" element={
+          <IntegratedMarkdownViewer 
+            apiBaseUrl="http://localhost:3300"
+            basePath="/docs"
+            hideFileTree={false}
+          />
+        } />
+      </Routes>
+    </BrowserRouter>
+  );
+}
+```
+
+### Advanced: Custom Components
+
+For maximum flexibility, use individual components:
+
+```tsx
+import { MarkdownContent, FileTree, ThemeProvider } from '@asafarim/complete-md-viewer';
+import '@asafarim/complete-md-viewer/dist/style.css';
+
+function CustomViewer() {
+  const [content, setContent] = useState('');
+  const [frontMatter, setFrontMatter] = useState({});
+  const [theme, setTheme] = useState('light');
+  
+  return (
+    <ThemeProvider theme={theme} toggleTheme={() => setTheme(theme === 'light' ? 'dark' : 'light')}>
+      <div className="custom-layout">
+        <FileTree 
+          data={treeData}
+          onFileSelect={(path) => loadFile(path)}
+        />
+        <MarkdownContent 
+          content={content}
+          frontMatter={frontMatter}
+        />
+      </div>
+    </ThemeProvider>
+  );
+}
+```
+
+## ⚙️ Backend Setup
+
+The package requires a simple backend server to serve your markdown files. Here's a minimal Express.js setup:
+
+```javascript
+import express from 'express';
+import fs from 'fs';
+import path from 'path';
+import cors from 'cors';
+
+const app = express();
+const PORT = 3300;
+const mdDocsPath = path.join(process.cwd(), 'markdown-files');
+
+app.use(cors());
+
+// API to return folder structure
+app.get('/api/folder-structure', (req, res) => {
+  const folderStructure = getFolderStructure(mdDocsPath);
+  res.json({ nodes: folderStructure });
+});
+
+// API to serve markdown files
+app.get('/api/file', (req, res) => {
+  const filePath = path.join(mdDocsPath, req.query.path);
+  if (fs.existsSync(filePath)) {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    res.json({ content });
+  } else {
+    res.status(404).json({ error: 'File not found' });
+  }
+});
+
+function getFolderStructure(dirPath, relativePath = '') {
+  const items = fs.readdirSync(dirPath);
+  const result = [];
+
+  for (const item of items) {
+    const itemPath = path.join(dirPath, item);
+    const stats = fs.statSync(itemPath);
+    const itemRelativePath = path.join(relativePath, item).replace(/\\/g, '/');
+
+    if (stats.isDirectory()) {
+      result.push({
+        name: item,
+        path: itemRelativePath,
+        type: 'folder',
+        children: getFolderStructure(itemPath, itemRelativePath)
+      });
+    } else if (item.endsWith('.md')) {
+      result.push({
+        name: item,
+        path: itemRelativePath,
+        type: 'file'
+      });
+    }
+  }
+  return result;
+}
+
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
+});
+```
+
+### Required API Endpoints
+
+- `GET /api/folder-structure` - Returns the file tree structure
+- `GET /api/file?path=<file-path>` - Returns the content of a specific file
+
+## 🎨 YAML Front Matter Support
+
+Enhance your markdown files with rich metadata:
+
+```markdown
 ---
-title: "Welcome to Your Markdown Documentation"
-description: "A demonstration of the @asafarim/simple-md-viewer package"
-author: "Demo User"
-date: "2025-07-22"
-lastModified: "2025-07-22"
+title: "API Documentation"
+description: "Complete API reference guide"
+author: "Your Name"
+date: "2025-01-22"
 category: "Documentation"
-tags:
-  - demo
-  - markdown
-  - documentation
+tags: ["api", "reference", "guide"]
+toc: true
 ---
-[![npm version](https://badge.fury.io/js/@asafarim%2Fsimple-md-viewer.svg)](https://www.npmjs.com/package/@asafarim/simple-md-viewer)
-[![GitHub](https://img.shields.io/badge/github-repo-blue)](https://github.com/AliSafari-IT/simple-md-viewer)
 
+# Your markdown content here...
+```
 
-# Welcome to Your Markdown Documentation 📚
+The front matter will be automatically parsed and displayed in a beautiful metadata section.
 
-This is a live demonstration of the `@asafarim/simple-md-viewer` package, showcasing how you can create a beautiful and professional markdown documentation site from your existing markdown files.
+## 📋 API Reference
 
-## ✨ Features Demonstrated
+### StandaloneMarkdownViewer
 
-### 🌳 Interactive File Tree Navigation
-Navigate through your markdown file structure using the collapsible file tree on the left. Click on any folder to expand it and explore your documentation.
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| apiBaseUrl | string | - | API base URL for fetching markdown content |
+| showHomePage | boolean | true | Whether to show the home page when no file is selected |
+| hideFileTree | boolean | false | Whether to hide the file tree sidebar |
+| sidebarCollapsed | boolean | false | Initial state of the sidebar (collapsed/expanded) |
+| className | string | - | Custom CSS class name |
+| style | object | - | Custom inline styles |
+| basePath | string | '/' | Base path for routing |
 
-### 📱 Fully Responsive Design
-This viewer works perfectly on all devices:
-- **Desktop**: Full sidebar and content layout
-- **Tablet**: Optimized layout with compressed sidebar  
-- **Mobile**: Collapsible sidebar overlay with touch-friendly navigation
+### IntegratedMarkdownViewer
 
-### 🎨 Theme Support
-Toggle between light and dark themes using the theme button in the header. Your preference is automatically saved and remembered.
+Same props as `StandaloneMarkdownViewer`, designed for use within existing React Router applications.
 
-### 📂 Advanced Directory Browsing
-When you click on a folder in the file tree, you'll see:
-- **List View**: Clean, compact file listing with icons
-- **Grid View**: Visual grid layout with file type indicators
-- **Detailed View**: Comprehensive table with file sizes, dates, and metadata
+### MarkdownContent
 
-## 🗂️ Your Documentation Structure
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| apiBaseUrl | string | - | API base URL for fetching markdown content |
+| showHomePage | boolean | true | Whether to show the home page |
+| hideFileTree | boolean | false | Whether to hide the file tree |
+| sidebarCollapsed | boolean | false | Control sidebar collapsed state |
+| content | string | - | Direct markdown content (alternative to API fetching) |
+| frontMatter | object | - | Front matter metadata object |
+| className | string | - | Custom CSS class name |
 
-Your markdown files are organized in the following structure:
+### FileTree
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| data | TreeNode[] | - | Tree data structure |
+| selectedPath | string | - | Currently selected file path |
+| onFileSelect | function | - | Callback when a file is selected |
+| className | string | - | Custom CSS class name |
+
+### ThemeProvider
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| theme | 'light' \| 'dark' | 'light' | Current theme |
+| toggleTheme | function | - | Function to toggle between themes |
+| children | ReactNode | - | Child components |
+
+## 💡 Advanced Features
+
+### Theme Customization
+
+Override CSS variables to customize the appearance:
+
+```css
+:root {
+  /* Light theme */
+  --smv-bg-primary: #ffffff;
+  --smv-text-primary: #333333;
+  --smv-accent-primary: #2196f3;
+  
+  /* Dark theme */
+  --smv-bg-primary-dark: #1e1e1e;
+  --smv-text-primary-dark: #e0e0e0;
+  --smv-accent-primary-dark: #64b5f6;
+}
+```
+
+### Mobile Responsiveness
+
+The component automatically adapts to different screen sizes:
+
+- **Desktop**: Professional sidebar with toggle control
+- **Tablet**: Compressed sidebar with easy access
+- **Mobile**: Overlay sidebar optimized for touch
+
+### File Structure
+
+Organize your markdown files in any directory structure:
 
 ```
 markdown-files/
-├── project-init.md
-├── changelogs/
-│   ├── CHANGELOG.md
-│   ├── project-init.md
-│   └── 2025/
-│       └── 2025-07-08_project-initialized-react-typescript-vite.md
-├── CurrentProjects/
-│   ├── advanced-hydrological-modeling-and-simulation-platform.md
-│   ├── asafarim-bibliography.md
-│   ├── igs-pharma/
-│   │   ├── fullstack-react-dotnet-pharmacy.md
-│   │   ├── fullstack-wordpress.md
-│   │   └── pharmacy-management-system.md
-│   └── packages/
-│       ├── setup-data.md
-│       └── asafarim/
-├── LegalDocs/
-├── SharedComponents/
-└── TechDocs/
-    ├── Cloud/
-    ├── Data-analysis/
-    ├── DevOps/
-    ├── DotNet/
-    ├── Frontend/
-    ├── MachineLearning/
-    ├── Projects/
-    ├── Security/
-    └── Testing/
+├── README.md
+├── getting-started/
+│   ├── installation.md
+│   └── quick-start.md
+├── api/
+│   ├── overview.md
+│   └── endpoints.md
+└── guides/
+    ├── styling.md
+    └── deployment.md
 ```
 
-## 🚀 Getting Started
+## 🚀 Complete Tutorial
 
-1. **Explore the File Tree**: Use the left sidebar to navigate through your documentation
-2. **Try Different Views**: Click on folders to see directory browsing in action
-3. **Toggle Themes**: Use the theme button to switch between light and dark modes
-4. **Test Responsiveness**: Try viewing on different screen sizes or devices
+For a comprehensive step-by-step guide with screenshots and advanced implementation examples, check out our [Complete Tutorial](./how-to.md). It covers:
 
-## 📄 YAML Front Matter Support
+- 📖 **Complete project setup** from scratch
+- 🎨 **Advanced styling** and theme customization  
+- 📱 **Mobile optimization** techniques
+- 🔧 **Production deployment** strategies
+- 💡 **Best practices** and troubleshooting
+- 🖼️ **Visual examples** with screenshots
 
-This document demonstrates YAML front matter support. The metadata you see at the top of documents (title, author, date, etc.) is automatically parsed and beautifully displayed.
+## 🤝 Contributing
 
-## 🔧 Technical Implementation
+Contributions are welcome! Please feel free to submit a Pull Request.
 
-This demo is powered by:
-- **Frontend**: React + TypeScript + Vite
-- **Backend**: Express.js server serving markdown files
-- **Package**: `@asafarim/simple-md-viewer` v1.5.1
+## 📄 License
 
-## 📖 Next Steps
+MIT © [ASafariM](https://github.com/alisafari-it)
 
-Now that you have a working demo:
+## 🔗 Links
 
-1. **Customize**: Modify the styling and configuration to match your needs
-2. **Deploy**: Deploy both the frontend and backend to your preferred hosting platform
-3. **Extend**: Add more markdown files and organize your documentation
-4. **Integrate**: Embed this into your existing applications or websites
+- [GitHub Repository](https://github.com/alisafari-it/complete-md-viewer)
+- [npm Package](https://www.npmjs.com/package/@asafarim/complete-md-viewer)
+- [Issues & Support](https://github.com/alisafari-it/complete-md-viewer/issues)
 
-## 📚 Learn How to Build This
+---
 
-Want to create your own markdown viewer? Follow our comprehensive tutorial:
-
-👉 **[Complete Tutorial: How to Build This Markdown Viewer](./how-to.md)**
-
-The tutorial covers:
-- 🏗️ **Complete setup** from scratch
-- 🔧 **Backend configuration** with Express.js
-- ⚛️ **React frontend** implementation
-- 🎨 **Styling and theming**
-- 🐛 **Troubleshooting common issues**
-- 🚀 **Deployment tips**
-
-Enjoy exploring your markdown documentation with this beautiful viewer! 🎉
+**Transform your markdown files into a professional documentation website today!** 🚀

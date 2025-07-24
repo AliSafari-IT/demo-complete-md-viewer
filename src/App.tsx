@@ -54,10 +54,15 @@ const AppContent = () => {
 };
 
 function App() {
+  // Set basename for GitHub Pages deployment
+  const basename = import.meta.env.PROD && window.location.hostname === 'alisafari-it.github.io' 
+    ? '/demo-complete-md-viewer' 
+    : '';
+
   return (
     <CustomThemeProvider>
       <div className="app">
-        <BrowserRouter>
+        <BrowserRouter basename={basename}>
           <Layout>
             <Suspense fallback={<div>Loading...</div>}>
               <AppContent />
