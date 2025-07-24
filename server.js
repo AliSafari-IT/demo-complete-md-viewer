@@ -11,7 +11,15 @@ const app = express();
 const PORT = 3300;
 const mdDocsPath = path.join(__dirname, 'public' , 'markdown-files');
 
-app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:3000'] }));
+app.use(cors({ 
+  origin: [
+    'https://alisafari-it.github.io', 
+    'https://alisafari-it.github.io/demo-complete-md-viewer',
+    'http://localhost:5173', 
+    'http://localhost:5174', 
+    'http://localhost:3000'
+  ] 
+}));
 
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.join(__dirname, 'dist')));
